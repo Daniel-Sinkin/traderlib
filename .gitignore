@@ -33,3 +33,21 @@
 
 .venv
 build
+
+# Compiled binary modules
+*.so
+
+# C extensions
+*.c
+*.o
+*.pyd
+*.pyo
+
+# Virtual environment
+.venv/
+
+# Build directories
+build/
+dist/
+__pycache__/
+*.egg-info/
