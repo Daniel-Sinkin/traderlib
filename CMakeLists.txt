@@ -8,13 +8,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Manually set pybind11_DIR using the installed package in the virtual environment
-execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -m pybind11 --cmake-dir
-    OUTPUT_VARIABLE pybind11_DIR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
+# Add the path to the vendorized pybind11
+set(pybind11_DIR "${CMAKE_SOURCE_DIR}/external/pybind11/share/cmake/pybind11")
 list(APPEND CMAKE_PREFIX_PATH "${pybind11_DIR}")
 
 # Find pybind11
