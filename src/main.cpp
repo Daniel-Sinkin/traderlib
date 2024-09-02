@@ -20,6 +20,14 @@ pybind11::array_t<float> computeEMA(const pybind11::array_t<float> &data_array, 
     const float *data_ptr = static_cast<const float *>(buf.ptr);
     size_t size = buf.size;
 
+    // Check for non-finite values (NaN, inf, -inf)
+    for (size_t i = 0; i < size; ++i) {
+        if (!std::isfinite(data_ptr[i])) {
+            // Gets converted to a ValueError by pybind11
+            throw std::invalid_argument("Data array contains non-finite values (NaN, inf, -inf).");
+        }
+    }
+
     pybind11::array_t<float> ema(size);
     auto ema_buf = ema.request();
     float *ema_ptr = static_cast<float *>(ema_buf.ptr);
