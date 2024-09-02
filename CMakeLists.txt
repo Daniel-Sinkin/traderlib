@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.14)
 
+# Suppress CMP0148 warning thrown by the cmake script of pybind
+if(POLICY CMP0148)
+    cmake_policy(SET CMP0148 NEW)
+endif()
+
 # Project name
 project(traderlib VERSION 1.0 LANGUAGES CXX)
 
