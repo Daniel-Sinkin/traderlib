@@ -148,8 +148,7 @@ pybind11::array_t<float> computeSupport(const pybind11::array_t<float> &low_pric
     return support;
 }
 
-// Define the module
-PYBIND11_MODULE(ta_module, m) {
+PYBIND11_MODULE(traderlib, m) {
     m.doc() = "Module for computing technical analysis indicators";
     m.def("computeEMA", &computeEMA, "Compute Exponential Moving Average (EMA)",
           pybind11::arg("data_array"), pybind11::arg("lookback"));
