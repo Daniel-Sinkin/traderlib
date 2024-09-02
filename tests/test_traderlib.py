@@ -1,6 +1,7 @@
+import datetime as dt
+
 import numpy as np
 import pytest
-
 from traderlib import (
     computeBollingerBands,
     computeEMA,
@@ -14,10 +15,9 @@ from traderlib import (
 )
 
 
-# Helper function to generate test data
 def generate_data(length, seed=42):
-    np.random.seed(seed)
-    return np.random.rand(length).astype(np.float32) * 100
+    _rng = np.random.default_rng(seed)
+    return _rng.uniform(0, 100.0, length).astype(np.float32)
 
 
 @pytest.fixture
