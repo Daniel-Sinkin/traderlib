@@ -29,3 +29,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE pybind11::module)
 # Set the output name for the Python module
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".so")
+set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/traderlib")

@@ -1,6 +1,5 @@
 import numpy as np
-
-import traderlib.traderlib as traderlib
+import traderlib
 
 # Create sample numpy arrays
 data_array = np.array([10, 11, 12, 13, 14, 15, 16, 17, 18, 19], dtype=np.float32)
