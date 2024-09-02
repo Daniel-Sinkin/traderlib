@@ -24,7 +24,7 @@ pybind11::array_t<float> computeEMA(const pybind11::array_t<float> &data_array, 
     if (lookback == 1) {
         // Return a copy of the input array
         pybind11::array_t<float> result(size);
-        auto result_buf = result.request();
+        pybind11::buffer_info result_buf = result.request();
         float *result_ptr = static_cast<float *>(result_buf.ptr);
         std::copy(data_ptr, data_ptr + size, result_ptr);
         return result;
@@ -38,7 +38,8 @@ pybind11::array_t<float> computeEMA(const pybind11::array_t<float> &data_array, 
     }
 
     pybind11::array_t<float> ema(size);
-    auto ema_buf = ema.request();
+
+    pybind11::buffer_info ema_buf = ema.request();
     float *ema_ptr = static_cast<float *>(ema_buf.ptr);
 
     float multiplier = 2.0f / (lookback + 1);
@@ -78,7 +79,7 @@ pybind11::array_t<float> computeStochasticOscillator(const pybind11::array_t<flo
     size_t size = close_buf.size;
 
     pybind11::array_t<float> stochastic(size);
-    auto stochastic_buf = stochastic.request();
+    pybind11::buffer_info stochastic_buf = stochastic.request();
     float *stochastic_ptr = static_cast<float *>(stochastic_buf.ptr);
 
     for (size_t i = 0; i < size; ++i) {
@@ -114,7 +115,7 @@ pybind11::array_t<float> computeResistance(const pybind11::array_t<float> &high_
     size_t size = buf.size;
 
     pybind11::array_t<float> resistance(size);
-    auto resistance_buf = resistance.request();
+    pybind11::buffer_info resistance_buf = resistance.request();
     float *resistance_ptr = static_cast<float *>(resistance_buf.ptr);
 
     for (size_t i = 0; i < size; ++i) {
@@ -148,7 +149,7 @@ pybind11::array_t<float> computeSupport(const pybind11::array_t<float> &low_pric
     size_t size = buf.size;
 
     pybind11::array_t<float> support(size);
-    auto support_buf = support.request();
+    pybind11::buffer_info support_buf = support.request();
     float *support_ptr = static_cast<float *>(support_buf.ptr);
 
     for (size_t i = 0; i < size; ++i) {
@@ -180,7 +181,7 @@ pybind11::array_t<float> computeSMA(const pybind11::array_t<float> &data_array, 
     size_t size = buf.size;
 
     pybind11::array_t<float> sma(size);
-    auto sma_buf = sma.request();
+    pybind11::buffer_info sma_buf = sma.request();
     float *sma_ptr = static_cast<float *>(sma_buf.ptr);
 
     for (size_t i = 0; i < size; ++i) {
@@ -216,9 +217,9 @@ computeBollingerBands(const pybind11::array_t<float> &data_array, int lookback, 
     pybind11::array_t<float> upper_band(size);
     pybind11::array_t<float> lower_band(size);
 
-    auto sma_buf = sma.request();
-    auto upper_band_buf = upper_band.request();
-    auto lower_band_buf = lower_band.request();
+    pybind11::buffer_info sma_buf = sma.request();
+    pybind11::buffer_info upper_band_buf = upper_band.request();
+    pybind11::buffer_info lower_band_buf = lower_band.request();
 
     float *sma_ptr = static_cast<float *>(sma_buf.ptr);
     float *upper_band_ptr = static_cast<float *>(upper_band_buf.ptr);
@@ -264,7 +265,7 @@ pybind11::array_t<float> computeRSI(const pybind11::array_t<float> &data_array, 
     size_t size = buf.size;
 
     pybind11::array_t<float> rsi(size);
-    auto rsi_buf = rsi.request();
+    pybind11::buffer_info rsi_buf = rsi.request();
     float *rsi_ptr = static_cast<float *>(rsi_buf.ptr);
 
     float gain = 0.0f, loss = 0.0f;
@@ -299,8 +300,9 @@ pybind11::array_t<float> computeRSI(const pybind11::array_t<float> &data_array, 
 }
 
 pybind11::array_t<float> computeMACD(const pybind11::array_t<float> &data_array, int fast_period, int slow_period, int signal_period) {
-    auto fast_ema = computeEMA(data_array, fast_period);
-    auto slow_ema = computeEMA(data_array, slow_period);
+
+    pybind11::array_t<float> fast_ema = computeEMA(data_array, fast_period);
+    pybind11::array_t<float> slow_ema = computeEMA(data_array, slow_period);
 
     pybind11::buffer_info fast_buf = fast_ema.request();
     pybind11::buffer_info slow_buf = slow_ema.request();
@@ -310,21 +312,21 @@ pybind11::array_t<float> computeMACD(const pybind11::array_t<float> &data_array,
     size_t size = fast_buf.size;
 
     pybind11::array_t<float> macd(size);
-    auto macd_buf = macd.request();
+    pybind11::buffer_info macd_buf = macd.request();
     float *macd_ptr = static_cast<float *>(macd_buf.ptr);
 
     for (size_t i = 0; i < size; ++i) {
         macd_ptr[i] = fast_ptr[i] - slow_ptr[i];
     }
 
-    auto signal = computeEMA(macd, signal_period);
+    pybind11::array_t<float> signal = computeEMA(macd, signal_period);
 
     return signal;
 }
 
 pybind11::array_t<int> computeMovingAverageCrossover(const pybind11::array_t<float> &data_array, int short_lookback, int long_lookback) {
-    auto short_sma = computeSMA(data_array, short_lookback);
-    auto long_sma = computeSMA(data_array, long_lookback);
+    pybind11::array_t<float> short_sma = computeSMA(data_array, short_lookback);
+    pybind11::array_t<float> long_sma = computeSMA(data_array, long_lookback);
 
     pybind11::buffer_info short_buf = short_sma.request();
     pybind11::buffer_info long_buf = long_sma.request();
@@ -334,7 +336,7 @@ pybind11::array_t<int> computeMovingAverageCrossover(const pybind11::array_t<flo
     size_t size = short_buf.size;
 
     pybind11::array_t<int> signals(size);
-    auto signals_buf = signals.request();
+    pybind11::buffer_info signals_buf = signals.request();
     int *signals_ptr = static_cast<int *>(signals_buf.ptr);
 
     for (size_t i = 0; i < size; ++i) {
