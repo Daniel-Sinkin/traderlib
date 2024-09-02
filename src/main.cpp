@@ -20,10 +20,19 @@ pybind11::array_t<float> computeEMA(const pybind11::array_t<float> &data_array, 
     const float *data_ptr = static_cast<const float *>(buf.ptr);
     size_t size = buf.size;
 
+    // Special case for lookback of 1: return the input array unchanged
+    if (lookback == 1) {
+        // Return a copy of the input array
+        pybind11::array_t<float> result(size);
+        auto result_buf = result.request();
+        float *result_ptr = static_cast<float *>(result_buf.ptr);
+        std::copy(data_ptr, data_ptr + size, result_ptr);
+        return result;
+    }
+
     // Check for non-finite values (NaN, inf, -inf)
     for (size_t i = 0; i < size; ++i) {
         if (!std::isfinite(data_ptr[i])) {
-            // Gets converted to a ValueError by pybind11
             throw std::invalid_argument("Data array contains non-finite values (NaN, inf, -inf).");
         }
     }
@@ -74,7 +83,7 @@ pybind11::array_t<float> computeStochasticOscillator(const pybind11::array_t<flo
 
     for (size_t i = 0; i < size; ++i) {
         if (i < lookback - 1) {
-            stochastic_ptr[i] = 0.0f; // Not enough data points, return 0 or handle as needed
+            stochastic_ptr[i] = 0.0f;
         } else {
             float highest_high = high_ptr[i];
             float lowest_low = low_ptr[i];
@@ -110,7 +119,7 @@ pybind11::array_t<float> computeResistance(const pybind11::array_t<float> &high_
 
     for (size_t i = 0; i < size; ++i) {
         if (i < lookback - 1) {
-            resistance_ptr[i] = 0.0f; // Not enough data points, return 0 or handle as needed
+            resistance_ptr[i] = 0.0f;
         } else {
             float highest_high = high_ptr[i];
             for (int j = 0; j < lookback; ++j) {
@@ -144,7 +153,7 @@ pybind11::array_t<float> computeSupport(const pybind11::array_t<float> &low_pric
 
     for (size_t i = 0; i < size; ++i) {
         if (i < lookback - 1) {
-            support_ptr[i] = 0.0f; // Not enough data points, return 0 or handle as needed
+            support_ptr[i] = 0.0f;
         } else {
             float lowest_low = low_ptr[i];
             for (int j = 0; j < lookback; ++j) {
